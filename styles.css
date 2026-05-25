@@ -1,0 +1,519 @@
+:root {
+  --bg-top: #ffe8f4;
+  --bg-bottom: #dbeaff;
+  --surface: rgba(255, 255, 255, 0.52);
+  --surface-strong: rgba(255, 255, 255, 0.76);
+  --text: #55456e;
+  --muted: #7f729a;
+  --accent: #f58cc8;
+  --accent-2: #8d8bf8;
+  --accent-3: #7ed7f7;
+  --period: #ff8db2;
+  --predicted: #d1b3ff;
+  --fertile: #9ee3cf;
+  --ovulation: #8e7bff;
+  --shadow-soft: 10px 10px 24px rgba(170, 157, 198, 0.28);
+  --shadow-inset: inset 2px 2px 8px rgba(255, 255, 255, 0.88), inset -3px -3px 10px rgba(188, 182, 216, 0.18);
+  --border: rgba(255, 255, 255, 0.46);
+  --danger: #ef6a8f;
+  --success: #48b898;
+}
+
+body.dark-theme {
+  --bg-top: #312744;
+  --bg-bottom: #171a2f;
+  --surface: rgba(26, 31, 53, 0.66);
+  --surface-strong: rgba(36, 42, 71, 0.8);
+  --text: #f6efff;
+  --muted: #c5bde0;
+  --accent: #ff95c6;
+  --accent-2: #9f92ff;
+  --accent-3: #75d7ff;
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow-soft: 12px 12px 30px rgba(3, 5, 13, 0.45);
+  --shadow-inset: inset 1px 1px 0 rgba(255, 255, 255, 0.06), inset -1px -1px 0 rgba(0, 0, 0, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.6), transparent 30%),
+    radial-gradient(circle at 85% 15%, rgba(255, 182, 221, 0.35), transparent 22%),
+    linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(10px);
+  opacity: 0.5;
+}
+
+body::before {
+  width: 280px;
+  height: 280px;
+  top: -80px;
+  right: -80px;
+  background: rgba(255, 184, 214, 0.45);
+}
+
+body::after {
+  width: 220px;
+  height: 220px;
+  bottom: 10%;
+  left: -60px;
+  background: rgba(126, 215, 247, 0.28);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1180px, calc(100% - 1.5rem));
+  margin: 0 auto;
+  padding: 1rem 0 2rem;
+}
+
+.glass-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero,
+.panel,
+.stat-card,
+.insight-card,
+.relief-card,
+.summary-card,
+.history-item,
+.symptom-entry,
+.calendar-day,
+.soft-button,
+.input-chip {
+  border-radius: 28px;
+}
+
+.hero {
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  animation: riseIn 0.8s ease both;
+}
+
+.hero-copy h1,
+.section-head h2,
+.relief-card h3 {
+  margin: 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.3rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-text {
+  margin: 0.55rem 0 0;
+  max-width: 48ch;
+  line-height: 1.6;
+}
+
+.hero-message {
+  margin-top: 1rem;
+  padding: 0.95rem 1rem;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-inset);
+  border-radius: 22px;
+  font-weight: 700;
+}
+
+.hero-actions {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.toggle-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.phase-ring-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.phase-ring {
+  width: 170px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  padding: 14px;
+  background: conic-gradient(var(--accent) 0deg, rgba(255, 255, 255, 0.38) 0deg);
+  box-shadow: var(--shadow-soft);
+  transition: background 0.45s ease;
+}
+
+.phase-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: linear-gradient(145deg, var(--surface-strong), rgba(255, 255, 255, 0.2));
+  box-shadow: var(--shadow-inset);
+  padding: 1rem;
+}
+
+.phase-ring-label,
+.phase-ring-inner small,
+.stat-label,
+.calendar-help,
+.tiny-text {
+  color: var(--muted);
+}
+
+.dashboard {
+  display: grid;
+  gap: 1rem;
+}
+
+.panel {
+  padding: 1rem;
+  animation: riseIn 0.8s ease both;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.stats-grid,
+.insights-grid,
+.relief-content,
+.settings-actions {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.stat-card,
+.insight-card,
+.relief-card,
+.summary-card,
+.history-item,
+.symptom-entry {
+  padding: 1rem;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-inset);
+}
+
+.stat-card strong,
+.insight-card strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.05rem;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.calendar-title {
+  min-width: 8.5rem;
+  text-align: center;
+  font-weight: 800;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.calendar-weekdays {
+  margin: 1rem 0 0.6rem;
+  padding: 0 0.1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.calendar-day {
+  position: relative;
+  min-height: 70px;
+  padding: 0.7rem 0.45rem;
+  border: 0;
+  cursor: pointer;
+  color: var(--text);
+  background: linear-gradient(145deg, var(--surface-strong), rgba(255, 255, 255, 0.16));
+  box-shadow: var(--shadow-soft);
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+}
+
+.calendar-day:hover,
+.calendar-day:focus-visible,
+.soft-button:hover,
+.soft-button:focus-visible,
+.symptom-button:hover,
+.symptom-button:focus-visible {
+  transform: translateY(-2px);
+}
+
+.calendar-day.muted {
+  opacity: 0.45;
+}
+
+.calendar-day.today {
+  outline: 2px solid rgba(126, 215, 247, 0.72);
+}
+
+.calendar-day.period {
+  background: linear-gradient(145deg, rgba(255, 141, 178, 0.92), rgba(255, 204, 223, 0.9));
+}
+
+.calendar-day.predicted {
+  background: linear-gradient(145deg, rgba(209, 179, 255, 0.96), rgba(235, 225, 255, 0.92));
+}
+
+.calendar-day.fertile {
+  background: linear-gradient(145deg, rgba(158, 227, 207, 0.95), rgba(227, 255, 246, 0.9));
+}
+
+.calendar-day.ovulation {
+  color: #fff;
+  background: linear-gradient(145deg, rgba(141, 139, 248, 0.96), rgba(109, 125, 255, 0.92));
+}
+
+.calendar-day.selected::after,
+.calendar-day.period::after,
+.calendar-day.predicted::after,
+.calendar-day.fertile::after,
+.calendar-day.ovulation::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 0.45rem;
+  bottom: 0.4rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tracker-controls,
+.settings-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.input-chip {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.85rem 1rem;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-inset);
+}
+
+.input-chip input {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  padding: 0.7rem 0.85rem;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+body.dark-theme .input-chip input {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.symptom-groups,
+.symptom-list,
+.history-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.symptom-groups {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.symptom-button,
+.soft-button {
+  border: 0;
+  cursor: pointer;
+  padding: 0.9rem 1rem;
+  color: var(--text);
+  background: linear-gradient(145deg, var(--surface-strong), rgba(255, 255, 255, 0.18));
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+}
+
+.symptom-button.active,
+.primary-button {
+  color: #fff;
+  background: linear-gradient(145deg, var(--accent), var(--accent-2));
+}
+
+.primary-button {
+  font-weight: 800;
+}
+
+.icon-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.4rem;
+}
+
+.symptom-entry,
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.symptom-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.symptom-tag {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: var(--shadow-inset);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.summary-card,
+.history-list,
+.symptom-list {
+  min-height: 78px;
+}
+
+.notification-row {
+  margin-top: 1rem;
+}
+
+.toggle-row {
+  display: inline-flex;
+  gap: 0.65rem;
+  align-items: center;
+  font-weight: 700;
+}
+
+.toggle-row input {
+  width: 18px;
+  height: 18px;
+}
+
+.empty-state {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (min-width: 720px) {
+  .app-shell {
+    width: min(1280px, calc(100% - 2rem));
+    padding-top: 1.5rem;
+  }
+
+  .hero {
+    grid-template-columns: 1.6fr 0.8fr;
+    align-items: center;
+    padding: 1.6rem;
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .overview-panel {
+    grid-column: span 12;
+  }
+
+  .calendar-panel {
+    grid-column: span 7;
+  }
+
+  .tracker-panel {
+    grid-column: span 5;
+  }
+
+  .insights-panel,
+  .relief-panel,
+  .settings-panel {
+    grid-column: span 4;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .insights-grid,
+  .relief-content,
+  .settings-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-day {
+    min-height: 60px;
+    padding: 0.55rem 0.35rem;
+  }
+
+  .calendar-weekdays {
+    font-size: 0.72rem;
+  }
+
+  .calendar-title {
+    min-width: 7.25rem;
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

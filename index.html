@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lucent Cycle Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero glass-card">
+      <div class="hero-copy">
+        <p class="eyebrow">Wellness dashboard</p>
+        <h1>Lucent</h1>
+        <p class="hero-text">Track your cycle, notice patterns, and get gentle suggestions that match how your body may be feeling today.</p>
+        <div class="hero-message" id="comfortMessage" aria-live="polite"></div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="soft-button toggle-button" id="themeToggle" type="button" aria-label="Toggle color theme">
+          <span class="toggle-icon">🌙</span>
+          <span>Theme</span>
+        </button>
+
+        <div class="phase-ring-wrap">
+          <div class="phase-ring" id="phaseRing" role="img" aria-label="Current cycle phase progress">
+            <div class="phase-ring-inner">
+              <span class="phase-ring-label">Phase</span>
+              <strong id="phaseName">Cycle</strong>
+              <small id="phaseDayLabel">Day 1</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="panel glass-card overview-panel" aria-labelledby="overviewHeading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Overview</p>
+            <h2 id="overviewHeading">Your cycle snapshot</h2>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span class="stat-label">Next period</span>
+            <strong id="nextPeriodText">Add a period start date</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Ovulation</span>
+            <strong id="ovulationText">-</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Fertile window</span>
+            <strong id="fertileWindowText">-</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Cycle average</span>
+            <strong id="averageCycleText">28 days</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel glass-card calendar-panel" aria-labelledby="calendarHeading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Calendar tracker</p>
+            <h2 id="calendarHeading">Track your month</h2>
+          </div>
+          <div class="calendar-nav">
+            <button class="soft-button icon-button" id="prevMonth" type="button" aria-label="Previous month">‹</button>
+            <div class="calendar-title" id="calendarTitle"></div>
+            <button class="soft-button icon-button" id="nextMonth" type="button" aria-label="Next month">›</button>
+          </div>
+        </div>
+
+        <div class="calendar-help">
+          Tap a date to mark the first day of a period. Period and predicted days will fill in automatically.
+        </div>
+
+        <div class="calendar-weekdays" aria-hidden="true">
+          <span>Sun</span>
+          <span>Mon</span>
+          <span>Tue</span>
+          <span>Wed</span>
+          <span>Thu</span>
+          <span>Fri</span>
+          <span>Sat</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </section>
+
+      <section class="panel glass-card tracker-panel" aria-labelledby="symptomHeading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Symptom tracker</p>
+            <h2 id="symptomHeading">Log how you feel today</h2>
+          </div>
+        </div>
+
+        <form class="tracker-controls" id="symptomForm">
+          <label class="input-chip">
+            <span>Date</span>
+            <input type="date" id="symptomDate" required>
+          </label>
+
+          <div class="symptom-groups" id="symptomButtons">
+            <button class="symptom-button" type="button" data-symptom="cramps">💢 Cramps</button>
+            <button class="symptom-button" type="button" data-symptom="headache">🤕 Headache</button>
+            <button class="symptom-button" type="button" data-symptom="mood">🫶 Mood</button>
+            <button class="symptom-button" type="button" data-symptom="fatigue">😴 Fatigue</button>
+          </div>
+
+          <button class="soft-button primary-button" type="submit">Save daily log</button>
+        </form>
+
+        <div class="symptom-list" id="symptomList"></div>
+      </section>
+
+      <section class="panel glass-card insights-panel" aria-labelledby="insightsHeading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">History & insights</p>
+            <h2 id="insightsHeading">Patterns over time</h2>
+          </div>
+        </div>
+
+        <div class="insights-grid">
+          <article class="insight-card">
+            <span class="stat-label">Logged cycles</span>
+            <strong id="cycleCountText">0</strong>
+          </article>
+          <article class="insight-card">
+            <span class="stat-label">Average period length</span>
+            <strong id="averagePeriodText">5 days</strong>
+          </article>
+        </div>
+
+        <div class="summary-card" id="patternSummary"></div>
+
+        <div class="history-list" id="historyList"></div>
+      </section>
+
+      <section class="panel glass-card relief-panel" aria-labelledby="reliefHeading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Relief guide</p>
+            <h2 id="reliefHeading">Suggestions for your current phase</h2>
+          </div>
+        </div>
+
+        <div class="relief-content">
+          <article class="relief-card">
+            <h3>Movement</h3>
+            <p id="exerciseSuggestion"></p>
+          </article>
+          <article class="relief-card">
+            <h3>Nourishment</h3>
+            <p id="dietSuggestion"></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel glass-card settings-panel" aria-labelledby="settingsHeading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Settings</p>
+            <h2 id="settingsHeading">Cycle preferences</h2>
+          </div>
+        </div>
+
+        <form class="settings-form" id="settingsForm">
+          <label class="input-chip">
+            <span>Average cycle length</span>
+            <input type="number" id="cycleLengthInput" min="20" max="45" required>
+          </label>
+          <label class="input-chip">
+            <span>Period length</span>
+            <input type="number" id="periodLengthInput" min="2" max="10" required>
+          </label>
+          <div class="settings-actions">
+            <button class="soft-button primary-button" type="submit">Save settings</button>
+            <button class="soft-button" id="resetButton" type="button">Clear all data</button>
+          </div>
+        </form>
+
+        <div class="notification-row">
+          <label class="toggle-row">
+            <input type="checkbox" id="reminderToggle">
+            <span>Enable local reminder note</span>
+          </label>
+          <p class="tiny-text" id="reminderStatus">Reminders are off.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
