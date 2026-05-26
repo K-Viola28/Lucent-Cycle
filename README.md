@@ -61,7 +61,7 @@ gentle visuals, intuitive tracking, and a soothing interface 💜
 
 ### 🌌 Live Demo
 
-<a href="YOUR-LIVE-LINK">
+<a href="https://k-viola28.github.io/Lucent-Cycle/">
   <img src="https://img.shields.io/badge/View%20Live%20Site-C084FC?style=for-the-badge&logo=vercel&logoColor=white" />
 </a>
 
