@@ -37,9 +37,21 @@ gentle visuals, intuitive tracking, and a soothing interface 💜
 
 <div align="center">
 
+### 🛠️ Built With
+
+<img src="https://img.shields.io/badge/HTML-C084FC?style=for-the-badge&logo=html5&logoColor=white" />
+<img src="https://img.shields.io/badge/CSS-C084FC?style=for-the-badge&logo=css3&logoColor=white" />
+<img src="https://img.shields.io/badge/JavaScript-C084FC?style=for-the-badge&logo=javascript&logoColor=white" />
+
+</div>
+
+---
+
+<div align="center">
+
 ### 📸 Preview
 
-<img src="https://placehold.co/800x400/1f1f1f/C084FC?text=Lucent+Cycle+Preview" />
+<img src="preview.svg" />
 
 </div>
 
@@ -56,4 +68,3 @@ gentle visuals, intuitive tracking, and a soothing interface 💜
 </div>
 
 ---
-
