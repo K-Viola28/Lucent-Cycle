@@ -7,13 +7,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Skip to main content link for keyboard navigation -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <div class="app-shell">
     <header class="hero glass-card">
       <div class="hero-copy">
         <p class="eyebrow">Wellness dashboard</p>
         <h1>Lucent</h1>
         <p class="hero-text">Track your cycle, notice patterns, and get gentle suggestions that match how your body may be feeling today.</p>
-        <div class="hero-message" id="comfortMessage" aria-live="polite"></div>
+        <div class="hero-message" id="comfortMessage" aria-live="polite" aria-atomic="true"></div>
       </div>
 
       <div class="hero-actions">
@@ -34,7 +37,7 @@
       </div>
     </header>
 
-    <main class="dashboard">
+    <main class="dashboard" id="main-content">
       <section class="panel glass-card overview-panel" aria-labelledby="overviewHeading">
         <div class="section-head">
           <div>
@@ -71,7 +74,7 @@
           </div>
           <div class="calendar-nav">
             <button class="soft-button icon-button" id="prevMonth" type="button" aria-label="Previous month">‹</button>
-            <div class="calendar-title" id="calendarTitle"></div>
+            <div class="calendar-title" id="calendarTitle" role="heading" aria-level="3"></div>
             <button class="soft-button icon-button" id="nextMonth" type="button" aria-label="Next month">›</button>
           </div>
         </div>
@@ -89,7 +92,7 @@
           <span>Fri</span>
           <span>Sat</span>
         </div>
-        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-grid" id="calendarGrid" role="grid"></div>
       </section>
 
       <section class="panel glass-card tracker-panel" aria-labelledby="symptomHeading">
@@ -103,20 +106,20 @@
         <form class="tracker-controls" id="symptomForm">
           <label class="input-chip">
             <span>Date</span>
-            <input type="date" id="symptomDate" required>
+            <input type="date" id="symptomDate" required aria-label="Symptom date">
           </label>
 
-          <div class="symptom-groups" id="symptomButtons">
-            <button class="symptom-button" type="button" data-symptom="cramps">💢 Cramps</button>
-            <button class="symptom-button" type="button" data-symptom="headache">🤕 Headache</button>
-            <button class="symptom-button" type="button" data-symptom="mood">🫶 Mood</button>
-            <button class="symptom-button" type="button" data-symptom="fatigue">😴 Fatigue</button>
+          <div class="symptom-groups" id="symptomButtons" role="group" aria-label="Symptom selection">
+            <button class="symptom-button" type="button" data-symptom="cramps" aria-label="Cramps">💢 Cramps</button>
+            <button class="symptom-button" type="button" data-symptom="headache" aria-label="Headache">🤕 Headache</button>
+            <button class="symptom-button" type="button" data-symptom="mood" aria-label="Mood">🫶 Mood</button>
+            <button class="symptom-button" type="button" data-symptom="fatigue" aria-label="Fatigue">😴 Fatigue</button>
           </div>
 
           <button class="soft-button primary-button" type="submit">Save daily log</button>
         </form>
 
-        <div class="symptom-list" id="symptomList"></div>
+        <div class="symptom-list" id="symptomList" role="region" aria-label="Symptom history"></div>
       </section>
 
       <section class="panel glass-card insights-panel" aria-labelledby="insightsHeading">
@@ -140,7 +143,7 @@
 
         <div class="summary-card" id="patternSummary"></div>
 
-        <div class="history-list" id="historyList"></div>
+        <div class="history-list" id="historyList" role="region" aria-label="Cycle history"></div>
       </section>
 
       <section class="panel glass-card relief-panel" aria-labelledby="reliefHeading">
@@ -174,29 +177,34 @@
         <form class="settings-form" id="settingsForm">
           <label class="input-chip">
             <span>Average cycle length</span>
-            <input type="number" id="cycleLengthInput" min="20" max="45" required>
+            <input type="number" id="cycleLengthInput" min="20" max="45" required aria-label="Average cycle length in days">
           </label>
           <label class="input-chip">
             <span>Period length</span>
-            <input type="number" id="periodLengthInput" min="2" max="10" required>
+            <input type="number" id="periodLengthInput" min="2" max="10" required aria-label="Period length in days">
           </label>
           <div class="settings-actions">
             <button class="soft-button primary-button" type="submit">Save settings</button>
-            <button class="soft-button" id="resetButton" type="button">Clear all data</button>
+            <button class="soft-button" id="resetButton" type="button" aria-label="Clear all data and reset to defaults">Clear all data</button>
           </div>
         </form>
 
         <div class="notification-row">
           <label class="toggle-row">
-            <input type="checkbox" id="reminderToggle">
+            <input type="checkbox" id="reminderToggle" aria-label="Enable browser reminder notifications">
             <span>Enable local reminder note</span>
           </label>
-          <p class="tiny-text" id="reminderStatus">Reminders are off.</p>
+          <p class="tiny-text" id="reminderStatus" aria-live="polite">Reminders are off.</p>
         </div>
       </section>
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Modular JavaScript files -->
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/predictions.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
