@@ -44,12 +44,17 @@ function isSameDay(a, b) {
 }
 
 /**
- * Format date as YYYY-MM-DD
+ * Format date as YYYY-MM-DD (fixed timezone bug)
+ * Uses local date components instead of ISO manipulation
  * @param {Date} date - The date to format
  * @returns {string} Date key string
  */
 function formatDateKey(date) {
-  return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const d = startOfDay(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -108,7 +113,7 @@ function capitalize(value) {
 }
 
 /**
- * Clamp a number between min and max
+ * Clamp a number between min and max with validation
  * @param {number} value - The value to clamp
  * @param {number} min - Minimum value
  * @param {number} max - Maximum value
@@ -120,4 +125,25 @@ function clampNumber(value, min, max, fallback) {
     return fallback;
   }
   return Math.min(Math.max(value, min), max);
+}
+
+/**
+ * Validate cycle settings and provide feedback
+ * @param {number} cycleLength - Proposed cycle length
+ * @param {number} periodLength - Proposed period length
+ * @returns {Object} { isValid, warnings }
+ */
+function validateCycleSettings(cycleLength, periodLength) {
+  const warnings = [];
+
+  if (cycleLength < 20) warnings.push('Cycle length is unusually short. Consult a doctor if concerned.');
+  if (cycleLength > 45) warnings.push('Cycle length is unusually long. Consult a doctor if concerned.');
+  if (periodLength < 2) warnings.push('Period length is very short. Please verify.');
+  if (periodLength > 10) warnings.push('Period length is unusually long. Consult a doctor if concerned.');
+  if (periodLength >= cycleLength) warnings.push('Period length cannot be longer than or equal to cycle length.');
+
+  return {
+    isValid: warnings.length === 0 || warnings.every(w => !w.includes('cannot')),
+    warnings: warnings.filter(w => w.includes('cannot') || warnings.length === 1)
+  };
 }
