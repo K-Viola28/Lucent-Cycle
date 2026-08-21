@@ -6,6 +6,7 @@
 let state = loadState();
 let currentMonth = new Date();
 let selectedSymptoms = new Set();
+let lastRenderedPhase = null;
 
 const elements = {
   comfortMessage: document.getElementById('comfortMessage'),
@@ -36,7 +37,11 @@ const elements = {
   symptomDate: document.getElementById('symptomDate'),
   symptomList: document.getElementById('symptomList'),
   reminderToggle: document.getElementById('reminderToggle'),
-  reminderStatus: document.getElementById('reminderStatus')
+  reminderStatus: document.getElementById('reminderStatus'),
+  reliefPanel: document.querySelector('.relief-panel'),
+  exportCSVButton: null,
+  exportJSONButton: null,
+  importButton: null
 };
 
 /**
@@ -46,8 +51,75 @@ function init() {
   applyTheme(elements, state);
   hydrateForms(elements, state);
   setDailyComfortMessage(elements);
+  createExportImportButtons();
   bindEvents();
   renderAll();
+}
+
+/**
+ * Create export/import buttons in settings
+ */
+function createExportImportButtons() {
+  const settingsPanel = document.querySelector('.settings-panel');
+  if (!settingsPanel) return;
+
+  const exportSection = document.createElement('div');
+  exportSection.className = 'settings-actions';
+  exportSection.style.marginTop = '1rem';
+  exportSection.innerHTML = `
+    <button class="soft-button" id="exportCSV" type="button" aria-label="Export data as CSV">Export CSV</button>
+    <button class="soft-button" id="exportJSON" type="button" aria-label="Export data as JSON">Export JSON</button>
+    <button class="soft-button" id="importButton" type="button" aria-label="Import data from JSON">Import Data</button>
+    <input type="file" id="importInput" accept=".json" style="display: none;" aria-label="Select JSON file to import">
+  `;
+  
+  settingsPanel.appendChild(exportSection);
+
+  elements.exportCSVButton = document.getElementById('exportCSV');
+  elements.exportJSONButton = document.getElementById('exportJSON');
+  elements.importButton = document.getElementById('importButton');
+  const importInput = document.getElementById('importInput');
+
+  elements.exportCSVButton.addEventListener('click', () => {
+    exportToCSV(state);
+    alert('Data exported as CSV.');
+  });
+
+  elements.exportJSONButton.addEventListener('click', () => {
+    exportToJSON(state);
+    alert('Data exported as JSON.');
+  });
+
+  elements.importButton.addEventListener('click', () => {
+    importInput.click();
+  });
+
+  importInput.addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const imported = await importFromJSON(file);
+      const confirmImport = window.confirm(
+        'This will replace your current data. Continue?\n\nBacked up your data first?'
+      );
+      if (!confirmImport) return;
+
+      state = {
+        settings: { ...defaultState.settings, ...imported.settings },
+        periods: Array.isArray(imported.periods) ? imported.periods : [],
+        symptoms: imported.symptoms && typeof imported.symptoms === 'object' ? imported.symptoms : {}
+      };
+      saveState(state);
+      hydrateForms(elements, state);
+      renderAll();
+      alert('Data imported successfully!');
+    } catch (error) {
+      alert(`Import failed: ${error.message}`);
+    }
+    
+    importInput.value = '';
+  });
 }
 
 /**
@@ -72,14 +144,24 @@ function bindEvents() {
 
   elements.settingsForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    state.settings.cycleLength = clampNumber(Number(elements.cycleLengthInput.value), 20, 45, 28);
-    state.settings.periodLength = clampNumber(Number(elements.periodLengthInput.value), 2, 10, 5);
+    const cycleLength = Number(elements.cycleLengthInput.value);
+    const periodLength = Number(elements.periodLengthInput.value);
+
+    const validation = validateSettings(cycleLength, periodLength);
+    if (!validation.isValid) {
+      alert(validation.message);
+      return;
+    }
+
+    state.settings.cycleLength = cycleLength;
+    state.settings.periodLength = periodLength;
     saveState(state);
+    alert(validation.message);
     renderAll();
   });
 
   elements.resetButton.addEventListener('click', () => {
-    if (!window.confirm('Clear all cycle history, symptoms, and settings?')) {
+    if (!window.confirm('Clear all cycle history, symptoms, and settings?\n\nThis cannot be undone. Make sure you\'ve exported your data!')) {
       return;
     }
 
@@ -90,6 +172,7 @@ function bindEvents() {
     hydrateForms(elements, state);
     applyTheme(elements, state);
     renderAll();
+    alert('All data cleared.');
   });
 
   elements.reminderToggle.addEventListener('change', async (event) => {
@@ -108,9 +191,11 @@ function bindEvents() {
     if (selectedSymptoms.has(symptom)) {
       selectedSymptoms.delete(symptom);
       button.classList.remove('active');
+      button.setAttribute('aria-pressed', 'false');
     } else {
       selectedSymptoms.add(symptom);
       button.classList.add('active');
+      button.setAttribute('aria-pressed', 'true');
     }
   });
 
@@ -128,6 +213,7 @@ function bindEvents() {
     syncSymptomButtons(elements, selectedSymptoms);
     renderSymptoms(elements, state);
     renderInsights(elements, state);
+    alert('Symptom logged successfully!');
   });
 }
 
@@ -140,7 +226,26 @@ function renderAll() {
   renderInsights(elements, state);
   renderSymptoms(elements, state);
   renderRelief(elements, state);
+  checkPhaseChange();
   updateReminderStatus();
+}
+
+/**
+ * Check if phase has changed and announce it
+ */
+function checkPhaseChange() {
+  const currentPhase = getCyclePhase(new Date(), state).phase;
+  if (lastRenderedPhase !== currentPhase) {
+    lastRenderedPhase = currentPhase;
+    const phasePanel = elements.reliefPanel;
+    if (phasePanel) {
+      phasePanel.setAttribute('aria-live', 'polite');
+      phasePanel.textContent = `Now in ${capitalize(currentPhase)} phase`;
+      setTimeout(() => {
+        phasePanel.removeAttribute('aria-live');
+      }, 3000);
+    }
+  }
 }
 
 /**
