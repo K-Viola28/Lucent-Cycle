@@ -174,6 +174,7 @@ function getSortedPeriodStarts(state) {
 
 /**
  * Get relief suggestions for current phase
+ * Supports dynamic updates when phase changes
  * @param {string} phase - The cycle phase
  * @returns {Object} Relief suggestions for exercise and diet
  */
@@ -194,4 +195,43 @@ function getPhaseColor(phase) {
     luteal: 'var(--accent)'
   };
   return colors[phase] || 'var(--accent)';
+}
+
+/**
+ * Get all phases for a cycle
+ * Useful for understanding the full cycle structure
+ * @param {Object} state - The application state
+ * @returns {Array} Array of phase info with day ranges
+ */
+function getPhaseInfo(state) {
+  const periodLength = state.settings.periodLength;
+  const cycleLength = state.settings.cycleLength;
+  const ovulationDay = cycleLength - 14;
+
+  return [
+    {
+      name: 'menstrual',
+      startDay: 1,
+      endDay: periodLength,
+      description: 'Menstrual phase'
+    },
+    {
+      name: 'follicular',
+      startDay: periodLength + 1,
+      endDay: ovulationDay - 5,
+      description: 'Follicular phase'
+    },
+    {
+      name: 'ovulation',
+      startDay: ovulationDay,
+      endDay: ovulationDay,
+      description: 'Ovulation day'
+    },
+    {
+      name: 'luteal',
+      startDay: ovulationDay + 1,
+      endDay: cycleLength,
+      description: 'Luteal phase'
+    }
+  ];
 }
