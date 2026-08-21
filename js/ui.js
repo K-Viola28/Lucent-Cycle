@@ -41,6 +41,9 @@ function renderOverview(elements, state) {
     ? Math.min((cycleInfo.dayNumber / state.settings.cycleLength) * 360, 360)
     : 18;
   elements.phaseRing.style.background = `conic-gradient(${getPhaseColor(currentPhase.phase)} ${progress}deg, rgba(255,255,255,0.28) ${progress}deg)`;
+  
+  // Update ARIA label for phase ring
+  elements.phaseRing.setAttribute('aria-label', `Current phase: ${capitalize(currentPhase.phase)}, ${dayLabel}`);
 }
 
 /**
@@ -122,6 +125,9 @@ function renderCalendar(elements, state, currentMonth) {
     if (stateForDate.selectedStart) {
       button.classList.add('selected');
       button.dataset.label = 'start';
+      button.setAttribute('aria-pressed', 'true');
+    } else {
+      button.setAttribute('aria-pressed', 'false');
     }
 
     button.addEventListener('click', () => {
@@ -213,7 +219,7 @@ function renderInsights(elements, state) {
 }
 
 /**
- * Render relief suggestions
+ * Render relief suggestions (updates dynamically based on phase)
  * @param {Object} elements - DOM elements
  * @param {Object} state - Application state
  */
@@ -222,10 +228,14 @@ function renderRelief(elements, state) {
   const relief = getPhaseRelief(phase);
   elements.exerciseSuggestion.textContent = relief.exercise;
   elements.dietSuggestion.textContent = relief.diet;
+  
+  // Mark relief content as dynamic for accessibility
+  elements.exerciseSuggestion.setAttribute('aria-live', 'polite');
+  elements.dietSuggestion.setAttribute('aria-live', 'polite');
 }
 
 /**
- * Set daily comfort message
+ * Set daily comfort message (changes every day)
  * @param {Object} elements - DOM elements
  */
 function setDailyComfortMessage(elements) {
@@ -252,7 +262,9 @@ function applyTheme(elements, state) {
  */
 function syncSymptomButtons(elements, selectedSymptoms) {
   elements.symptomButtons.querySelectorAll('[data-symptom]').forEach((button) => {
-    button.classList.toggle('active', selectedSymptoms.has(button.dataset.symptom));
+    const isActive = selectedSymptoms.has(button.dataset.symptom);
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
   });
 }
 
@@ -266,4 +278,5 @@ function hydrateForms(elements, state) {
   elements.periodLengthInput.value = state.settings.periodLength;
   elements.reminderToggle.checked = Boolean(state.settings.reminders);
   elements.symptomDate.value = formatDateKey(new Date());
+  syncSymptomButtons(elements, new Set());
 }
